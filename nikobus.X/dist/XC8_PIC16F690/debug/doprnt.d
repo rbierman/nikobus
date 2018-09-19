@@ -1,0 +1,1 @@
+ dist/XC8_PIC16F690/debug/doprnt.d  dist/XC8_PIC16F690/debug/doprnt.p1:  /opt/microchip/xc8/v1.44/sources/common/doprnt.c

@@ -1,0 +1,27 @@
+#
+# Generated - do not edit!
+#
+# NOCDDL
+#
+CND_BASEDIR=`pwd`
+# HT_PIC16F690 configuration
+CND_ARTIFACT_DIR_HT_PIC16F690=dist/HT_PIC16F690/production
+CND_ARTIFACT_NAME_HT_PIC16F690=nikobus.X.production.hex
+CND_ARTIFACT_PATH_HT_PIC16F690=dist/HT_PIC16F690/production/nikobus.X.production.hex
+CND_PACKAGE_DIR_HT_PIC16F690=${CND_DISTDIR}/HT_PIC16F690/package
+CND_PACKAGE_NAME_HT_PIC16F690=nikobus.x.tar
+CND_PACKAGE_PATH_HT_PIC16F690=${CND_DISTDIR}/HT_PIC16F690/package/nikobus.x.tar
+# XC8_PIC16F690 configuration
+CND_ARTIFACT_DIR_XC8_PIC16F690=dist/XC8_PIC16F690/production
+CND_ARTIFACT_NAME_XC8_PIC16F690=nikobus.X.production.hex
+CND_ARTIFACT_PATH_XC8_PIC16F690=dist/XC8_PIC16F690/production/nikobus.X.production.hex
+CND_PACKAGE_DIR_XC8_PIC16F690=${CND_DISTDIR}/XC8_PIC16F690/package
+CND_PACKAGE_NAME_XC8_PIC16F690=nikobus.x.tar
+CND_PACKAGE_PATH_XC8_PIC16F690=${CND_DISTDIR}/XC8_PIC16F690/package/nikobus.x.tar
+# XC8_PIC16F690__Simulate_ configuration
+CND_ARTIFACT_DIR_XC8_PIC16F690__Simulate_=dist/XC8_PIC16F690__Simulate_/production
+CND_ARTIFACT_NAME_XC8_PIC16F690__Simulate_=nikobus.X.production.hex
+CND_ARTIFACT_PATH_XC8_PIC16F690__Simulate_=dist/XC8_PIC16F690__Simulate_/production/nikobus.X.production.hex
+CND_PACKAGE_DIR_XC8_PIC16F690__Simulate_=${CND_DISTDIR}/XC8_PIC16F690__Simulate_/package
+CND_PACKAGE_NAME_XC8_PIC16F690__Simulate_=nikobus.x.tar
+CND_PACKAGE_PATH_XC8_PIC16F690__Simulate_=${CND_DISTDIR}/XC8_PIC16F690__Simulate_/package/nikobus.x.tar
