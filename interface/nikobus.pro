@@ -1,6 +1,6 @@
-update=Mon 24 Sep 2018 10:07:14 PM PDT
+update=Sat 05 Jan 2019 03:26:39 AM PST
 version=1
-last_client=kicad
+last_client=eeschema
 [cvpcb]
 version=1
 NetIExt=net
@@ -80,3 +80,13 @@ LibName28=atmel
 LibName29=contrib
 LibName30=valves
 LibName31=hd44780u
+[schematic_editor]
+version=1
+PageLayoutDescrFile=
+PlotDirectoryName=
+SubpartIdSeparator=0
+SubpartFirstId=65
+NetFmtName=
+SpiceForceRefPrefix=0
+SpiceUseNetNumbers=0
+LabSize=60
