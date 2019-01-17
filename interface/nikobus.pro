@@ -1,6 +1,6 @@
-update=Sat 05 Jan 2019 03:26:39 AM PST
+update=Tue 15 Jan 2019 10:03:13 AM CET
 version=1
-last_client=eeschema
+last_client=kicad
 [cvpcb]
 version=1
 NetIExt=net
@@ -86,7 +86,7 @@ PageLayoutDescrFile=
 PlotDirectoryName=
 SubpartIdSeparator=0
 SubpartFirstId=65
-NetFmtName=
+NetFmtName=Pcbnew
 SpiceForceRefPrefix=0
 SpiceUseNetNumbers=0
 LabSize=60
