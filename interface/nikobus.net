@@ -1,7 +1,7 @@
 (export (version D)
   (design
     (source /home/ron/git/nikobus/interface/nikobus.sch)
-    (date "Wed 16 Jan 2019 11:11:18 PM CET")
+    (date "Thu 17 Jan 2019 09:27:54 PM CET")
     (tool "Eeschema 4.0.7-e2-6376~58~ubuntu16.04.1")
     (sheet (number 1) (name /) (tstamps /)
       (title_block
@@ -178,7 +178,7 @@
       (sheetpath (names /) (tstamps /))
       (tstamp 5C313727))
     (comp (ref D7)
-      (value 2V7)
+      (value 3V3)
       (footprint Diodes_THT:D_DO-35_SOD27_P10.16mm_Horizontal)
       (libsource (lib device) (part D_Zener))
       (sheetpath (names /) (tstamps /))
