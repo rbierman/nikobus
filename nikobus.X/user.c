@@ -11,27 +11,21 @@
 #include "main.h"
 
 
-
 /******************************************************************************/
 /* User Functions                                                             */
 /******************************************************************************/
 
 /* <Initialize variables in user.h and insert code for user algorithms.> */
-
 void InitApp(void) {
 
-    ANSEL = 0b00000100; //Only enable AN2/RA2
+    ANSEL = 0; // Disable analog input because used as GIO
     ANSELH = 0; //Disable analog input because used as GIO
-    ADCON0bits.CHS = 0b0010; // Select channel AN2
-    ADCON0bits.ADFM = 0;
-    ADCON0bits.ADON = 0; // Turn off AD converter.
-
     CM1CON0 = 0; //Disable comparator because used as GIO
     CM2CON0 = 0; //Disable comparator because used as GIO
 
-    TRISA = 0b00111111; // PORT A RA0, RA2, RA3 input
+    TRISA = 0b00010100; // PORT A RA2, RA4 input
     TRISB = 0; // PORT B All outputs because not used.
-    TRISC = 0; // PORT C All outputs*/
+    TRISC = 0b00000011; // PORT C All outputs Except for RC0 and RC1 as there was a PCB bug in the first version. In that version these ports are connected to RA2 and RA4*/
 
     PORTA = 0x00;
     PORTB = 0x00;
@@ -87,6 +81,7 @@ void InitApp(void) {
 
     //Enable transmission
     TXEN = 1;
+    CREN = 1;
     
     // Global Interrupt Enable bit
     INTCONbits.GIE = 1;
@@ -101,9 +96,9 @@ void InitApp(void) {
     // 0 = None of the PORTA or PORTB general purpose I/O pins have changed state
     INTCONbits.RABIF = 0;
 
-    IOCAbits.IOCA0 = 1; //Enable interrupt detection for RA0
+    BUS_RECEIVE_PULSE_INTERUPT_BIT = 1; //Enable interrupt detection for RA2
     PIE1bits.TMR1IE = 0; // Enable interrupt for timer1;
     PIE1bits.T2IE = 0; //Enable interrupt for timer2;
-    PIE1bits.ADIE = 0; //A/D Converter (ADC) Interrupt Enable bit(
+    PIE1bits.ADIE = 0; //A/D Converter (ADC) Interrupt Enable bit
 }
 
