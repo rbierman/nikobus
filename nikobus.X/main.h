@@ -12,6 +12,9 @@
 #include <stdio.h>
 #include <stdbool.h>       /* For true/false definition */
 #include <stdlib.h>        /* For strtol etc */
+#include <stdbool.h>
+#include <string.h>
+#include <limits.h>
 
 #include "system.h"        /* System funct/params, like osc/peripheral config */
 

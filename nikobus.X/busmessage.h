@@ -8,17 +8,22 @@
 #ifndef BUSMESSAGE_H
 #define	BUSMESSAGE_H
 
-    struct Address{
-        unsigned char address[3];
-        unsigned char button;
-    };
+    #include <stdint.h>
+    #include <stdio.h>
+    #include <stdbool.h>
+    #include <ctype.h>
+
     struct BusMessage {
-        unsigned char rawData[3]; //Ready to send to the bus.
+        uint24_t address;
+        uint8_t button;
+        uint8_t charPosition; 
     };
-
-    struct BusMessage encodeAddress(struct Address *address);
-    struct Address decodeMessage(struct BusMessage *busMessage);
-
-
+    
+    void decodeBusMessage(uint24_t raw, struct BusMessage *busMessage);
+    uint24_t encodeBusMessage(struct BusMessage *busMessage);
+    
+    bool isComplete(struct BusMessage *busMessage);
+    bool addChar(struct BusMessage *busMessage, char c);
+    void resetBusMessage(struct BusMessage *busMessage);
 #endif	/* BUSMESSAGE_H */
 

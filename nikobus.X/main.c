@@ -1,6 +1,10 @@
 /************************************** ****************************************/
 /* Files to Include                                                           */
 /******************************************************************************/
+// 
+//    busMessage.address = 0x3E65AF;
+//    busMessage.button = 1;
+
 
 #if defined(__XC)
 #include <xc.h>         /* XC8 General Include File */
@@ -23,13 +27,21 @@
 #define BUS_1_LOW_LIMIT 118 // 0,5ms
 #define BUS_1_HEIGH_LIMIT 149 // 1,0 ms
 
-struct BusMessage busBuffer;
+uint24_t busBuffer;
 struct BusMessage busMessage;
+struct BusMessage receivedMessage;
+char message[12];
+
 unsigned char bitsReceived = 0;
 unsigned char dataBlock = 0;
 
-void setBusActive(uint8_t value) {
-    BUS_SEND_ACTIVE_BIT = value;
+void setBusActive() {
+    BUS_SEND_ACTIVE_BIT = 1;
+    __delay_ms(10);
+}
+
+void setBusInActive() {
+    BUS_SEND_ACTIVE_BIT = 0;
     __delay_ms(10);
 }
 
@@ -49,10 +61,23 @@ void sendBit(uint8_t value) {
     sendPulse();
 }
 
+void sendSerialChar(char c) {
+    TXREG = c;
+    while (!TRMT);
+}
+
+void sendSerialString(const char *text) {
+    while (*text) {
+        TXREG = *text;
+        while (!TRMT);
+        *text++;
+    }
+}
+
 void sendBusMessage() {
     INTCONbits.GIE = 0;
     //Activate bus busy signal and wait for a couple of ms
-    setBusActive(1);
+    setBusActive();
 
     //Send three initial bits
     sendBit(1);
@@ -68,35 +93,23 @@ void sendBusMessage() {
     uint8_t lsb = 0;
     //Send the encoded data buffer to the bus (from back to front)
 
-    uint8_t numberOfElements = sizeof (busMessage.rawData) / sizeof (busMessage.rawData[0]);
-    for (uint8_t i = 1; i <= numberOfElements; i++) {
-        uint8_t element = numberOfElements - i;
-        uint8_t data = busMessage.rawData[element];
+    uint24_t raw = encodeBusMessage(&busMessage);
 
-        for (uint8_t shift = 0; shift < 8; shift++) {
-            lsb = data & 1;
-            sendBit(lsb);
+    for (int shift = 0; shift < sizeof(raw) * CHAR_BIT; shift++) {        
+        lsb = raw & 1;
+        sendBit(lsb);
 
-            //Shift the address bit stream to the left
-            data = data >> 1;
-        }
+        //Shift the address bit stream to the right
+        raw >>= 1;
     }
 
     //Wait for a couple of ms to release the bus
     __delay_ms(6);
 
     //Release bus busy signal
-    setBusActive(0);
+    setBusInActive();
 
     INTCONbits.GIE = 1;
-}
-
-void sendSerial(const char *text) {
-    while (*text) {
-        TXREG = *text;
-        while (!TRMT);
-        *text++;
-    }
 }
 
 /******************************************************************************/
@@ -112,9 +125,11 @@ void main(void) {
     /* Initialize I/O and Peripherals for application */
     InitApp();
     
-    sendSerial("Nikobus to Serial converter ready\r\n");
-    sendSerial("May the force be with you!\r\n");
-
+    sendSerialString("Nikobus to Serial converter ready\r\n");
+    sendSerialString("May the force be with you!\r\n");    
+    
+    resetBusMessage(&busMessage);
+    
     while (true) {
         if(OERR) {
             CREN = 0;
@@ -122,34 +137,26 @@ void main(void) {
         }
         
         if (RCIF) {
-            char u = RCREG;
-            struct Address address;
-            address.address[0] = 0x3E;
-            address.address[1] = 0x65;
-            address.address[2] = 0xAF;
-            address.button = 1;
+            char c = RCREG;
             
-            busMessage = encodeAddress(&address);
-            
-            char text[12];
-            sprintf(text, "%02X%02X%02X:%02X\r\n", address.address[0], address.address[1], address.address[2], address.button);
+            if(c == 13 ) {
+                if(isComplete(&busMessage)) {
+                    strcpy(message, "\r\nOK\r\n");
+                    sendBusMessage();
+                } else {
+                    strcpy(message, "\r\nInvalid\r\n");
+                }
+                resetBusMessage(&busMessage);
+                sendSerialString(message);               
+            }
 
-            sendSerial(text);
-            sendBusMessage();
+            if(addChar(&busMessage, c)) {
+                sendSerialChar(c);
+            }
         }
     }
 }
-
-void resetBuffer() {
-    busMessage = busBuffer;
-    busBuffer.rawData[0] = 0;
-    busBuffer.rawData[1] = 0;
-    busBuffer.rawData[2] = 0;
-
-    bitsReceived = 0;
-    dataBlock = 2;
-}
-
+    
 void interrupt isr(void) {
     unsigned char timer = TMR0;
 
@@ -160,40 +167,36 @@ void interrupt isr(void) {
         INTCONbits.T0IE = 0;
         TMR0 = TMR0_RELOAD;
         
-        // Bus reader timeout. Check if a full message is read.
-        resetBuffer();
+        // Bus reader timeout. Reset Buffer
+        busBuffer = 0;
+        bitsReceived = 0;
     }
 
     if (INTCONbits.RABIF == 1) {
         if (BUS_RECEIVE_PULSE_BIT == 1) {
             //Reinitialize the timer and reload value.
             TMR0 = TMR0_RELOAD;
-            if (bitsReceived == 9) {
-                dataBlock = 1;
-            } else if (bitsReceived == 17) {
-                dataBlock = 0;
-            }
-
+    
             //ignore the first bit as it's a start bit.
             if (bitsReceived >= 1) {
                 //Shift the raw dataBlock to the right.
-                busBuffer.rawData[dataBlock] = busBuffer.rawData[dataBlock] >> 1;
+                busBuffer >>= 1;
 
                 if ((timer > BUS_0_LOW_LIMIT) && (timer < BUS_0_HEIGH_LIMIT)) {
                     // Do nothing we already shifted a 0 in there
                 } else if ((timer > BUS_1_LOW_LIMIT) && (timer < BUS_1_HEIGH_LIMIT)) {
                     // Swap msb to 1
-                    busBuffer.rawData[dataBlock] = busBuffer.rawData[dataBlock] | 0b10000000;
+                    busBuffer = busBuffer | (unsigned long)0x800000;
                 } else {
-                    resetBuffer();
+                    busBuffer = 0;
+                    bitsReceived = 0;
                 }
 
                 if (bitsReceived == 24) {
-                    struct Address address = decodeMessage(&busBuffer);
-                    
-                    char text[12];
-                    sprintf(text, "%02X%02X%02X:%02X\r\n", address.address[0], address.address[1], address.address[2], address.button);
-                    sendSerial(text);
+                    decodeBusMessage(busBuffer, &receivedMessage);
+
+                    sprintf(message, "%06lX:%02X\r\n", (unsigned long)receivedMessage.address, receivedMessage.button);
+                    sendSerialString(message);
                 }
             }
 
