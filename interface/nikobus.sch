@@ -920,4 +920,21 @@ Wire Wire Line
 	8350 750  8100 750 
 Wire Wire Line
 	8650 750  8950 750 
+$Comp
+L D_TVS D9
+U 1 1 5C4694EA
+P 8200 3500
+F 0 "D9" H 8200 3600 50  0000 C CNN
+F 1 "D_TVS" H 8200 3400 50  0000 C CNN
+F 2 "Diodes_THT:D_DO-35_SOD27_P10.16mm_Horizontal" H 8200 3500 50  0001 C CNN
+F 3 "" H 8200 3500 50  0001 C CNN
+	1    8200 3500
+	0    1    1    0   
+$EndComp
+Wire Wire Line
+	8200 3350 8200 2900
+Connection ~ 8200 2900
+Wire Wire Line
+	8200 3650 8200 4100
+Connection ~ 8200 4100
 $EndSCHEMATC
