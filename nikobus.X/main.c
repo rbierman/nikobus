@@ -139,9 +139,13 @@ void main(void) {
         if (RCIF) {
             char c = RCREG;
             
-            if(c == 13 ) {
+            // Enter
+            if(c == 13) {
                 if(isComplete(&busMessage)) {
                     strcpy(message, "\r\nOK\r\n");
+                    
+                    // Make sure the bus is available before sending the message.
+                    while(BUS_RECEIVE_ACTIVE_BIT);
                     sendBusMessage();
                 } else {
                     strcpy(message, "\r\nInvalid\r\n");
